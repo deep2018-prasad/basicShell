@@ -98,6 +98,7 @@ int main ()
 	char * userName = getlogin ();
 	char ** argList = NULL;
 	char * tempStr = NULL;
+	char maxChar[MAX_USR_CHAR];
 
 	tempStr = str_concatanate (homeDir, userName);
 	tempStr = str_concatanate (tempStr, "/");
@@ -185,6 +186,16 @@ int main ()
 
 		if (newLineFlag == 1)
 		{
+			if (tempStr != NULL)
+			{
+				free(tempStr);
+			}
+
+			if (argList != NULL)
+			{
+				free (argList);
+				argList = NULL;
+			}
 			continue;
 		}
 
@@ -208,7 +219,7 @@ int main ()
 		argList[sizeArgList] = NULL;
 		sizeArgList++;
 
-		if (comparing_string (argList[0], "exit")) 
+		if (comparing_string (argList[0], "exit")  || comparing_string (argList[0], "logout")) 
 		{
 			if (tempStr != NULL)
 			{
@@ -224,7 +235,27 @@ int main ()
 		}
 		else if (comparing_string (argList[0], "history"))
 		{
-			
+			fp = fopen (historyPath, "r");
+
+			while (!feof (fp))
+			{
+				memset (maxChar, 0, MAX_USR_CHAR);
+				fgets (maxChar,  MAX_USR_CHAR, fp);
+				fprintf (stderr, "%s", maxChar);
+			}
+			fclose (fp);
+			fflush (fp);
+			if (tempStr != NULL)
+			{
+				free(tempStr);
+			}
+
+			if (argList != NULL)
+			{
+				free (argList);
+				argList = NULL;
+			}
+			continue;
 		}
 
 		pid = fork ();
